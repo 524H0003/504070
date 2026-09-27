@@ -64,7 +64,7 @@ def get_orders():
 
 
 @app.get("/orders/{order_id}")
-def get_order(order_id: int = Path(gt=0)):
+def get_order(order_id: Annotated[int, Path(gt=0)]):
     order = find_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
@@ -91,11 +91,9 @@ def create_order(order_create: OrderCreate):
 
 @app.put("/orders/{order_id}")
 def update_order(
-    order_id: Annotated[int | None, Query(gt=0)] = None,
-    notify_customer: Optional[bool] = Query(
-        None, description="Whether to notify customer"
-    ),
-    priority: Optional[str] = Query(None, description="Processing priority"),
+    order_id: Annotated[int, Path(gt=0)],
+    notify_customer: Annotated[Optional[bool], Query()] = None,
+    priority: Annotated[Optional[str], Query()] = None,
     update: OrderUpdate = None,
 ):
     order = find_order(order_id)
